@@ -19,9 +19,9 @@ echo "--------------------------------------------------------------------------
 
 mkdir $HOME/aptos
 cd $HOME/aptos
-wget https://raw.githubusercontent.com/aptos-labs/aptos-core/main/docker/compose/public_full_node/docker-compose.yaml
-wget https://raw.githubusercontent.com/aptos-labs/aptos-core/main/docker/compose/public_full_node/public_full_node.yaml
-wget https://devnet.aptoslabs.com/genesis.blob
-wget https://devnet.aptoslabs.com/waypoint.txt
+wget https://raw.githubusercontent.com/aptos-labs/aptos-core/main/docker/compose/public_full_node/docker-compose.yaml &>/dev/null
+wget https://raw.githubusercontent.com/aptos-labs/aptos-core/main/docker/compose/public_full_node/public_full_node.yaml &>/dev/null
+wget https://devnet.aptoslabs.com/genesis.blob &>/dev/null
+wget https://devnet.aptoslabs.com/waypoint.txt &>/dev/null
 
 docker compose up -d
