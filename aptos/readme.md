@@ -9,9 +9,11 @@ curl -s https://raw.githubusercontent.com/cryptopushka/nodes/main/aptos/install.
 ```
 
 ## Проверяем статус синхронизации
-```curl 127.0.0.1:9101/metrics 2> /dev/null | grep aptos_state_sync_version | grep type```
+```
+curl 127.0.0.1:9101/metrics 2> /dev/null | grep aptos_state_sync_version | grep type
+```
 
-Должно выглядеть примерно так
+Должно выглядеть примерно так:
 
 ```
 aptos_state_sync_version{type="committed"} 210245
@@ -22,4 +24,6 @@ aptos_state_sync_version{type="target"} 210246
 
 ## Посмотреть логи
 
-```docker logs -f aptos-fullnode-1 --tail 5000```
+```
+docker logs -f aptos-fullnode-1 --tail 5000
+```
