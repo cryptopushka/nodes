@@ -18,7 +18,7 @@ docker compose start
 
 echo "=================================================="
 
-echo -e "\e[1m\e[32m11. Aptos FullNode Updated \e[0m"
+echo -e "\e[1m\e[32mAptos FullNode Updated \e[0m"
 
 echo "=================================================="
 
