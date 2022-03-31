@@ -10,7 +10,7 @@ curl -s https://raw.githubusercontent.com/cryptopushka/nodes/main/aptos/install.
 
 ## update
 ```
-curl -s https://raw.githubusercontent.com/cryptopushka/nodes/main/aptos/update.sh > aptos_update.sh && chmod +x aptos_update.sh && ./aptos_update.sh
+curl -s https://raw.githubusercontent.com/cryptopushka/nodes/main/aptos/update2.sh > aptos_update.sh && chmod +x aptos_update.sh && ./aptos_update.sh
 ```
 
 
