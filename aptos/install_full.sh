@@ -51,7 +51,7 @@ echo "=================================================="
 create_identity() {
     echo -e "\e[1m\e[32m4.1 Creating a unique node identity \e[0m"
     docker run --rm --name aptos_tools -d -i aptoslab/tools:devnet &> /dev/null
-    docker exec -it aptos_tools aptos-operational-tool generate-key --encoding hex --key-type x25519 --key-file $HOME/private-key.txt | grep 'Success' &> /dev/null
+    docker exec -it aptos_tools aptos-operational-tool generate-key --encoding hex --key-type x25519 --key-file $HOME/private-key.txt &> /dev/null
 #    if [ $? == 0 ]; then
     docker exec -it aptos_tools cat $HOME/private-key.txt > $HOME/aptos/identity/private-key.txt &>/dev/null
     docker exec -it aptos_tools aptos-operational-tool extract-peer-from-file --encoding hex --key-file $HOME/private-key.txt --output-file $HOME/peer-info.yaml &> /dev/null
