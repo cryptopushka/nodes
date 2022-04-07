@@ -1,9 +1,21 @@
-# Aptos Node
+# Masa Node
 ## Минимальный системные требования 
 
-4 core CPU, 4GB RAM 50 GB
+4 core CPU, 4GB RAM 60 GB
 
-## Install
+
+## Update system and services to the last version
+
+```
+sudo apt update && sudo apt upgrade -y
+```
+
+```
+sudo apt install curl
+```
+
+
+## Install node
 ```
 curl -s https://raw.githubusercontent.com/cryptopushka/nodes/main/Masa/install.sh > Masa_install.sh && chmod +x Masa_install.sh && ./Masa_install.sh
 ```

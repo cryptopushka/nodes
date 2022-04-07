@@ -25,14 +25,14 @@ echo "--------------------------------------------------------------------------
 cd $HOME
 sudo apt install apt-transport-https -y &>/dev/null
 
-if [ ! -d $HOME/masa-node-v1.0/ ]; then
-  git clone https://github.com/masa-finance/masa-node-v1.0 &>/dev/null
+if [ ! -d $HOME/masa-node-v1.03/ ]; then
+  git clone https://github.com/masa-finance/masa-node-v1.03 &>/dev/null
 fi
-cd $HOME/masa-node-v1.0/src
+cd $HOME/masa-node-v1.03/src
 git checkout v1.03
 make all &>/dev/null
 go get github.com/ethereum/go-ethereum/accounts/keystore &>/dev/null
-cd $HOME/masa-node-v1.0/src/build/bin
+cd $HOME/masa-node-v1.03/src/build/bin
 cp * /usr/local/bin
 echo "Ставим geth quorum"
 cd $HOME
@@ -42,7 +42,7 @@ rm -v geth_v21.10.0_linux_amd64.tar.gz &>/dev/null
 chmod +x $HOME/geth
 sudo mv -f $HOME/geth /usr/bin/
 echo "Инициализируем ноду"
-cd $HOME/masa-node-v1.0
+cd $HOME/masa-node-v1.03
 geth --datadir data init ./network/testnet/genesis.json
 PRIVATE_CONFIG=ignore
 echo 'export PRIVATE_CONFIG='${PRIVATE_CONFIG} >> $HOME/.profile
@@ -54,7 +54,7 @@ After=network.target
 [Service]
 Type=simple
 User=$USER
-ExecStart=/usr/bin/geth --identity ${MASA_NODENAME} --datadir $HOME/masa-node-v1.0/data --bootnodes enode://aaf136ec1d53d0980294c838deb4492414e220f0cc60bb62b54bdb6eade1d314afbcbd7257d88e73135e63c07413e8fb538f64e047bea9e9b8ae394d84fc345d@49.161.210.223:30300  --emitcheckpoints --istanbul.blockperiod 1 --mine --minerthreads 1 --syncmode full --verbosity 5 --networkid 190250 --rpc --rpccorsdomain "*" --rpcvhosts "*" --rpcaddr 127.0.0.1 --rpcport 8545 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,istanbul --port 30300
+ExecStart=/usr/bin/geth --identity ${MASA_NODENAME} --datadir $HOME/masa-node-v1.03/data --bootnodes enode://aaf136ec1d53d0980294c838deb4492414e220f0cc60bb62b54bdb6eade1d314afbcbd7257d88e73135e63c07413e8fb538f64e047bea9e9b8ae394d84fc345d@49.161.210.223:30300  --emitcheckpoints --istanbul.blockperiod 1 --mine --minerthreads 1 --syncmode full --verbosity 5 --networkid 190250 --rpc --rpccorsdomain "*" --rpcvhosts "*" --rpcaddr 127.0.0.1 --rpcport 8545 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,istanbul --port 30300
 Restart=on-failure
 RestartSec=10
 LimitNOFILE=4096
