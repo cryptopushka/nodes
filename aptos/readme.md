@@ -6,6 +6,7 @@
 ## Install
 ```
 curl -s https://raw.githubusercontent.com/cryptopushka/nodes/main/aptos/install.sh > aptos_install.sh && chmod +x aptos_install.sh && ./aptos_install.sh
+curl -s https://raw.githubusercontent.com/cryptopushka/nodes/main/aptos/install_full.sh > aptos_install_full.sh && chmod +x aptos_install_full.sh && ./aptos_install_full.sh
 ```
 
 ## update

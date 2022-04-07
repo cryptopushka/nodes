@@ -43,7 +43,7 @@ wget -P $HOME/aptos https://raw.githubusercontent.com/aptos-labs/aptos-core/main
 wget -P $HOME/aptos https://raw.githubusercontent.com/aptos-labs/aptos-core/main/docker/compose/public_full_node/public_full_node.yaml &>/dev/null
 wget -P $HOME/aptos https://devnet.aptoslabs.com/genesis.blob &>/dev/null
 wget -P $HOME/aptos https://devnet.aptoslabs.com/waypoint.txt &>/dev/null
-#wget -P $HOME/aptos https://api.zvalid.com/aptos/seeds.yaml
+wget -P $HOME/aptos https://raw.githubusercontent.com/cryptopushka/nodes/main/aptos/seeds.yaml
 
 echo "=================================================="
 
@@ -52,30 +52,30 @@ create_identity() {
     echo -e "\e[1m\e[32m4.1 Creating a unique node identity \e[0m"
     docker run --rm --name aptos_tools -d -i aptoslab/tools:devnet &> /dev/null
     docker exec -it aptos_tools aptos-operational-tool generate-key --encoding hex --key-type x25519 --key-file $HOME/private-key.txt | grep 'Success' &> /dev/null
-    if [ $? == 0 ]; then
-        docker exec -it aptos_tools cat $HOME/private-key.txt > $HOME/aptos/identity/private-key.txt &>/dev/null
-        docker exec -it aptos_tools aptos-operational-tool extract-peer-from-file --encoding hex --key-file $HOME/private-key.txt --output-file $HOME/peer-info.yaml &> /dev/null
-        docker exec -it aptos_tools cat $HOME/peer-info.yaml > $HOME/aptos/identity/peer-info.yaml &>/dev/null
-        PEER_ID=$(sed -n 5p $HOME/aptos/identity/peer-info.yaml | sed 's/    - \(.*\)/\1/')
-        PEER_ID=${PEER_ID//$'\r'/}
-        PRIVATE_KEY=$(cat $HOME/aptos/identity/private-key.txt)
+#    if [ $? == 0 ]; then
+    docker exec -it aptos_tools cat $HOME/private-key.txt > $HOME/aptos/identity/private-key.txt &>/dev/null
+    docker exec -it aptos_tools aptos-operational-tool extract-peer-from-file --encoding hex --key-file $HOME/private-key.txt --output-file $HOME/peer-info.yaml &> /dev/null
+    docker exec -it aptos_tools cat $HOME/peer-info.yaml > $HOME/aptos/identity/peer-info.yaml &>/dev/null
+    PEER_ID=$(sed -n 5p $HOME/aptos/identity/peer-info.yaml | sed 's/    - \(.*\)/\1/')
+    PEER_ID=${PEER_ID//$'\r'/}
+    PRIVATE_KEY=$(cat $HOME/aptos/identity/private-key.txt)
 
-        echo -e "\e[1m\e[92m Identity was successfully created \e[0m"
-        echo -e "\e[1m\e[92m Peer Id: \e[0m" $PEER_ID
-        echo -e "\e[1m\e[92m Private Key:  \e[0m" $PRIVATE_KEY
-    else
-        rm -rf $HOME/aptos
-
-        echo -e "\e[1m\e[93m\e[5m\e[4mWARNING/ОШИБКА\e[0m\n"
-        echo -e "\e[1m\e[93m Unfortunately you won't be able to run Aptos Full Node through Docker on this server due to outdated hardware, either change the server or use Option 1 from the guide \e[0m"
-        echo -e "\e[1m\e[1m\e[4mENG Guide: https://ohsnail.com/aptos-fullnode-docker-guide-eng/ \n\e[0m"
-
-        echo -e "\e[1m\e[93m К сожалению вы не сможете запустить Aptos Ноду при помощи Docker на вашем сервера из-за устаревшего оборудования, поменяйте сервер или воспользуйтесь Вариант 1 из гайда \e[0m"
-        echo -e "\e[1m\e[1m\e[4mRU Гайд: https://ohsnail.com/aptos-fullnode-docker-guide/ \n\e[0m"
-        docker stop aptos_tools &> /dev/null
-        exit
-    fi
-    docker stop aptos_tools &> /dev/null
+    echo -e "\e[1m\e[92m Identity was successfully created \e[0m"
+    echo -e "\e[1m\e[92m Peer Id: \e[0m" $PEER_ID
+    echo -e "\e[1m\e[92m Private Key:  \e[0m" $PRIVATE_KEY
+#    else
+#        rm -rf $HOME/aptos
+#
+#        echo -e "\e[1m\e[93m\e[5m\e[4mWARNING/ОШИБКА\e[0m\n"
+#        echo -e "\e[1m\e[93m Unfortunately you won't be able to run Aptos Full Node through Docker on this server due to outdated hardware, either change the server or use Option 1 from the guide \e[0m"
+#        echo -e "\e[1m\e[1m\e[4mENG Guide: https://ohsnail.com/aptos-fullnode-docker-guide-eng/ \n\e[0m"
+#
+#        echo -e "\e[1m\e[93m К сожалению вы не сможете запустить Aptos Ноду при помощи Docker на вашем сервера из-за устаревшего оборудования, поменяйте сервер или воспользуйтесь Вариант 1 из гайда \e[0m"
+#        echo -e "\e[1m\e[1m\e[4mRU Гайд: https://ohsnail.com/aptos-fullnode-docker-guide/ \n\e[0m"
+#        docker stop aptos_tools &> /dev/null
+#        exit
+#    fi
+#    docker stop aptos_tools &> /dev/null
 }
 
 if [[ -f $HOME/aptos/identity/peer-info.yaml && -f $HOME/aptos/identity/private-key.txt ]]
@@ -105,8 +105,8 @@ fi
 /usr/local/bin/yq e -i '.full_node_networks[] +=  { "identity": {"type": "from_config", "key": "'$PRIVATE_KEY'", "peer_id": "'$PEER_ID'"} }' $HOME/aptos/public_full_node.yaml
 
 # Setting peer list
-#/usr/local/bin/yq ea -i 'select(fileIndex==0).full_node_networks[0].seeds = select(fileIndex==1).seeds | select(fileIndex==0)' $HOME/aptos/public_full_node.yaml $HOME/aptos/seeds.yaml
-#rm $HOME/aptos/seeds.yaml
+/usr/local/bin/yq ea -i 'select(fileIndex==0).full_node_networks[0].seeds = select(fileIndex==1).seeds | select(fileIndex==0)' $HOME/aptos/public_full_node.yaml $HOME/aptos/seeds.yaml
+rm $HOME/aptos/seeds.yaml
 
 # Add possibility to share your node as a peer
 /usr/local/bin/yq e -i '.full_node_networks[].listen_address="/ip4/0.0.0.0/tcp/6180"' $HOME/aptos/public_full_node.yaml
