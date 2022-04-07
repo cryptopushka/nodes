@@ -68,7 +68,7 @@ sudo systemctl restart masad
 
 echo 'ГОТОВО!';
 
-echo -e "\e[1m\e[32mПосотреть татус ноды: \e[0m"
+echo -e "\e[1m\e[32mПосмотреть статус ноды: \e[0m"
 echo -e "\e[1m\e[39m    sudo systemctl status masad \n \e[0m"
 
 echo -e "\e[1m\e[32m Посмотреть логи ноды: \e[0m"
