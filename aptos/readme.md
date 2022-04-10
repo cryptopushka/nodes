@@ -9,15 +9,24 @@ curl -s https://raw.githubusercontent.com/cryptopushka/nodes/main/aptos/install.
 curl -s https://raw.githubusercontent.com/cryptopushka/nodes/main/aptos/install_full.sh > aptos_install_full.sh && chmod +x aptos_install_full.sh && ./aptos_install_full.sh
 ```
 
+## update
+```
+curl -s https://raw.githubusercontent.com/cryptopushka/nodes/main/aptos/update2.sh > aptos_update.sh && chmod +x aptos_update.sh && ./aptos_update.sh
+```
+
+
+
 ## Install use systemd
 ```
 curl -s https://raw.githubusercontent.com/cryptopushka/nodes/main/aptos/install_systemd.sh > aptos_install_full.sh && chmod +x aptos_install_full.sh && ./aptos_install_full.sh
 ```
 
-## update
+## update use systemd
 ```
-curl -s https://raw.githubusercontent.com/cryptopushka/nodes/main/aptos/update2.sh > aptos_update.sh && chmod +x aptos_update.sh && ./aptos_update.sh
+curl -s https://raw.githubusercontent.com/cryptopushka/nodes/main/aptos/update_systemd.sh > aptos_update.sh && chmod +x aptos_update.sh && ./aptos_update.sh
 ```
+
+
 
 
 ## Проверяем статус синхронизации
