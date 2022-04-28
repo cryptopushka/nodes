@@ -1,10 +1,10 @@
 # Defund Node
-## Минимальный системные требования 
+## Минимальные системные требования 
 
-4 CPU, 16GB RAM, 500GB - 2TB SSD
+6 CPU, 16GB RAM, 350GB SSD
 
 
-## Instal Soft
+## Install Soft
 ```
 sudo apt install curl -y
 ```
