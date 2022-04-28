@@ -1,7 +1,7 @@
 # Defund Node
 ## Минимальный системные требования 
 
-4 CPU, 16GB RAM, 500GB - 2TB SSD
+4 CPU, 8GB RAM, 250GB
 
 
 ## Instal Soft
