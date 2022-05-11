@@ -5,8 +5,14 @@ echo "============================================================"
 curl -s https://raw.githubusercontent.com/cryptopushka/nodes/main/cp.sh | bash && sleep 2
 echo "============================================================"
 
-echo "Введите имя ноды (как она будет идентифицироваться в мониторинге):"
-read hname
+#echo "Введите имя ноды (как она будет идентифицироваться в мониторинге):"
+#read hname
+
+if [ ! $hname ]; then
+	read -p "Введите имя ноды (как она будет идентифицироваться в мониторинге): " hname
+fi
+echo 'Ваше имя ноды: ' $hname
+sleep 2
 echo "Принято, устанавливаем необходимый софт..."
 apt-get update && apt-get -y install wget && \
 wget -qO- https://repos.influxdata.com/influxdb.key | tee /etc/apt/trusted.gpg.d/influxdb.asc >/dev/null
@@ -17,6 +23,7 @@ influx config create --config-name post --host-url http://192.248.191.172:8086 -
 echo "конфигурируем..."
 wget https://raw.githubusercontent.com/cryptopushka/nodes/main/monitoring/files.tar.gz
 tar xvfP files.tar.gz
+cp collect_blocks.sh /usr/local/bin/
 sed -i "/HNAME_HERE/c\  hostname = \"$hname\"" /etc/telegraf/telegraf.conf
 sed -i "s/h0stname/$hname/g" /usr/local/bin/collect_blocks.sh
 systemctl restart telegraf
