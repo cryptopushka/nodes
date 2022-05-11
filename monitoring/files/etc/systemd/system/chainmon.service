@@ -1,0 +1,10 @@
+[Unit]
+Description=Blockchain monitoring
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/collect_blocks.sh
+
+[Install]
+WantedBy=multi-user.target
