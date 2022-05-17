@@ -27,8 +27,14 @@ aptos_state_sync_version{type="executed_transactions"} 356757
 aptos_state_sync_version{type="synced"} 356757
 ```
 
-## Check logs
+## Check full-node logs
 
 ```
-docker logs -f --tail 100 aptos-fullnode-1
+docker logs -f aptos_testnet-fullnode-1 --tail 100
+```
+
+## Check validator logs
+
+```
+docker logs -f aptos_testnet-validator-1 --tail 100
 ```
