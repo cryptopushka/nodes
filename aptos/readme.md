@@ -6,7 +6,7 @@
 ## Prepare system before node installation
 ```
 sudo apt update && sudo apt upgrade -y
-sudo install curl
+sudo apt install curl
 ```
 
 ## Auto install docker version
