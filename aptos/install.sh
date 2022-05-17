@@ -1,45 +1,125 @@
 #!/bin/bash
-echo "-----------------------------------------------------------------------------"
-curl -s https://raw.githubusercontent.com/cryptopushka/nodes/main/cp.sh | bash
-echo "-----------------------------------------------------------------------------"
 
-echo "Устанавливаем софт"
-echo "-----------------------------------------------------------------------------"
-curl -s https://raw.githubusercontent.com/cryptopushka/nodes/main/utils/ufw.sh | bash &>/dev/null
-curl -s https://raw.githubusercontent.com/cryptopushka/nodes/main/utils/docker.sh | bash &>/dev/null
-curl -s https://raw.githubusercontent.com/cryptopushka/nodes/main/utils/docker-compose.sh | bash &>/dev/null
-sudo apt install --fix-broken -y &>/dev/null
-sudo apt install wget nano mc -y &>/dev/null
-source .profile
-source .bashrc
-sleep 1
+function aptos_username {
+  if [ ! ${aptos_username} ]; then
+  echo "Придумайте имя ноды"
+  line
+  read aptos_username
+  fi
+}
 
-echo "Весь необходимый софт установлен"
-echo "-----------------------------------------------------------------------------"
+function install_ufw {
+  curl -s https://raw.githubusercontent.com/cryptopushka/nodes/main/utils/ufw.sh | bash &>/dev/null
+}
 
-mkdir $HOME/aptos
-cd $HOME/aptos
-wget https://raw.githubusercontent.com/aptos-labs/aptos-core/main/docker/compose/public_full_node/docker-compose.yaml &>/dev/null
-wget https://raw.githubusercontent.com/aptos-labs/aptos-core/main/docker/compose/public_full_node/public_full_node.yaml &>/dev/null
-wget https://devnet.aptoslabs.com/genesis.blob &>/dev/null
-wget https://devnet.aptoslabs.com/waypoint.txt &>/dev/null
+function install_docker {
+  curl -s https://raw.githubusercontent.com/cryptopushka/nodes/main/utils/docker.sh | bash &>/dev/null
+}
 
-docker-compose up -d
+function set_vars {
+  echo "export WORKSPACE=aptos_testnet" >> ${HOME}/.bash_profile
+  echo "export PUBLIC_IP=$(curl -s ifconfig.me)" >> ${HOME}/.bash_profile
+  echo "export aptos_username=${aptos_username}"  >> ${HOME}/.bash_profile
+  source ${HOME}/.bash_profile
+}
 
-echo "=================================================="
+function update_deps {
+  sudo apt update
+  sudo apt install mc build-essential wget htop curl jq unzip -y
+  sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 &>/dev/null
+  sudo chmod a+x /usr/local/bin/yq
+}
 
-echo -e "\e[1m\e[32mAptos FullNode Installed \e[0m"
+function download_aptos_cli {
+  wget -qO aptos-cli.zip https://github.com/aptos-labs/aptos-core/releases/download/aptos-cli-v0.1.1/aptos-cli-0.1.1-Ubuntu-x86_64.zip
+  sudo unzip -o aptos-cli.zip -d /usr/local/bin
+  sudo chmod +x /usr/local/bin/aptos
+  rm aptos-cli.zip
+}
 
-echo "=================================================="
+function prepare_config {
+  mkdir ${HOME}/${WORKSPACE}
+  wget -qO ${HOME}/${WORKSPACE}/docker-compose.yaml https://raw.githubusercontent.com/cryptopushka/nodes/main/aptos/prepare_files/docker-compose.yaml
+  wget -qO ${HOME}/${WORKSPACE}/validator.yaml https://raw.githubusercontent.com/cryptopushka/nodes/main/aptos/prepare_files/validator.yaml
+  wget -qO ${HOME}/${WORKSPACE}/fullnode.yaml https://raw.githubusercontent.com/cryptopushka/nodes/main/aptos/prepare_files/fullnode.yaml
+}
 
-echo -e "\e[1m\e[32mTo stop the Aptos Node: \e[0m"
-echo -e "\e[1m\e[39m    docker compose stop \n \e[0m"
+function generate_keys {
+  aptos genesis generate-keys --output-dir ${HOME}/${WORKSPACE}
+}
 
-echo -e "\e[1m\e[32mTo start the Aptos Node: \e[0m"
-echo -e "\e[1m\e[39m    docker compose start \n \e[0m"
+function configure_validator {
+  aptos genesis set-validator-configuration \
+  --keys-dir ${HOME}/${WORKSPACE} --local-repository-dir ${HOME}/${WORKSPACE} \
+  --username $aptos_username \
+  --validator-host $PUBLIC_IP:6180 \
+  --full-node-host $PUBLIC_IP:6182
+}
 
-echo -e "\e[1m\e[32mTo check the Aptos Node Logs: \e[0m"
-echo -e "\e[1m\e[39m    docker logs -f aptos-fullnode-1 --tail 5000 \n \e[0m"
+function generate_root_key {
+  mkdir -p ${HOME}/${WORKSPACE}/keys
+  aptos key generate --output-file ${HOME}/${WORKSPACE}/keys/root
+}
 
-echo -e "\e[1m\e[32mTo check the node status: \e[0m"
-echo -e "\e[1m\e[39m    curl 127.0.0.1:9101/metrics 2> /dev/null | grep aptos_state_sync_version | grep type \n \e[0m"
+function add_layout {
+  ROOT_KEY=0x`cat ${HOME}/${WORKSPACE}/keys/root.pub`
+  tee ${HOME}/${WORKSPACE}/layout.yaml > /dev/null <<EOF
+---
+root_key: "${ROOT_KEY}"
+users:
+  - ${aptos_username}
+chain_id: 23
+EOF
+}
+
+function download_framework {
+  wget -qO ${HOME}/${WORKSPACE}/framework.zip https://github.com/aptos-labs/aptos-core/releases/download/aptos-framework-v0.1.0/framework.zip
+  unzip -o ${HOME}/${WORKSPACE}/framework.zip -d ${HOME}/${WORKSPACE}/
+  rm ${HOME}/${WORKSPACE}/framework.zip
+}
+
+function compile_genesis_waypoint {
+  aptos genesis generate-genesis --local-repository-dir ${HOME}/${WORKSPACE} --output-dir ${HOME}/${WORKSPACE}
+}
+
+function up_validator {
+  docker compose -f ${HOME}/${WORKSPACE}/docker-compose.yaml up -d
+}
+function logo {
+  curl -s https://raw.githubusercontent.com/cryptopushka/nodes/main/cp.sh | bash
+}
+
+function line {
+  echo "-----------------------------------------------------------------------------"
+}
+
+function colors {
+  GREEN="\e[1m\e[32m"
+  RED="\e[1m\e[39m"
+  NORMAL="\e[0m"
+}
+
+colors
+line
+logo
+line
+aptos_username
+set_vars
+line
+install_ufw
+install_docker
+update_deps
+line
+download_aptos_cli
+prepare_config
+generate_keys
+configure_validator
+generate_root_key
+add_layout
+download_framework
+line
+compile_genesis_waypoint
+line
+up_validator
+line
+echo "Готово"
